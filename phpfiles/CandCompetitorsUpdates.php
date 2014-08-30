@@ -1,0 +1,79 @@
+<?php
+require_once __DIR__ . '/db_connect.php';
+/*
+Needed variables
+$cand_id 
+$cand_const_id;
+seemore
+*/
+$db = new DB_CONNECT();
+//echo 'hii'; 
+$response=array();
+$message="start";
+$cand_id=1;//$_POST['cand_id'];
+$cand_const_id=1;//$_POST['cand_const_id'];
+//$cand_const_id=$_POST['cand_const_id'];
+$seemore=0;//$_POST['seemore'];
+
+$max=($seemore+1)*5;
+$min=$max-5;
+if($min <=0)
+$min=0;
+$result=mysql_query("select C.name,U.msg,U.msg_id,U.date_time,C.pic from CAND_SIGNUP as C,CAND_UPDATES as U where C.constituency_id=$cand_const_id and C.cand_id=U.cand_id") or die(mysql_error());
+$length=mysql_num_rows($result) or die(mysql_error());
+//echo "$length";
+$x=0;
+$y=1;
+$row=mysql_fetch_array($result);
+if(!$row)
+$response['success']=0;
+else
+$response['success']=1;
+//echo $row['name'];
+while( $y<=($seemore+1)*5-5 && $y<$length )
+{
+//echo $y;
+$row=mysql_fetch_array($result);
+$y++;
+}
+for($p=0;$p<5;$p++)
+{
+	$response['msg_id'.$x]=0;;
+	$response['msg'.$x]="empty";
+	$response['name'.$x]="empty";
+	$response['date_time'.$x]="empty";
+	$response['pic'.$x]="empty";
+	
+
+}
+
+	while( $row && $x<5 && $x < $length)
+	{
+
+	
+	//echo $row;
+	
+	$response['msg_id'.$x]=$row['msg_id'];
+	$response['msg'.$x]=$row['msg'];
+	$response['name'.$x]=$row['name'];
+	$response['date_time'.$x]=$row['date_time'];
+	$response['pic'.$x]=$row['pic'];
+	$row=mysql_fetch_array($result);	
+//	echo "<br>";
+	echo $x;
+	$x++;
+	}
+
+
+	
+echo json_encode($response);
+/*for($i=0;$i<$x;$i++)
+{
+echo $response['msg'.$i];
+echo $response['name'.$i];
+echo $response['date_time'.$i];
+echo $response['pic'.$i];
+echo "<br>";
+}*/
+?>
+
